@@ -11,20 +11,24 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:probando/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  testWidgets('Prime Dox app smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(const PrimeDoxApp());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // Verify that our app loads with the correct title.
+    expect(find.text('PRIME DOX'), findsOneWidget);
+    expect(find.text('Servicios Profesionales de Información'), findsOneWidget);
+    expect(find.text('SERVICIOS DISPONIBLES'), findsOneWidget);
+    expect(find.text('CONTACTOS'), findsOneWidget);
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    // Verify that some service items are present.
+    expect(find.text('RENIEC'), findsOneWidget);
+    expect(find.text('TELEFONIA'), findsOneWidget);
+    expect(find.text('DELITOS'), findsOneWidget);
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Verify that contact names are present.
+    expect(find.text('PEDRO DOXING'), findsOneWidget);
+    expect(find.text('JOSE'), findsOneWidget);
+    expect(find.text('ANÓNIMO DOX'), findsOneWidget);
   });
 }

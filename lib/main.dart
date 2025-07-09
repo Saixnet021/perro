@@ -31,150 +31,125 @@ class PrimeDoxHome extends StatelessWidget {
     }
   }
 
+  // Helper methods for responsive design
+  bool isMobile(BuildContext context) =>
+      MediaQuery.of(context).size.width < 600;
+  bool isTablet(BuildContext context) =>
+      MediaQuery.of(context).size.width >= 600 &&
+      MediaQuery.of(context).size.width < 900;
+  bool isDesktop(BuildContext context) =>
+      MediaQuery.of(context).size.width >= 900;
+
+  int getGridCrossAxisCount(BuildContext context) {
+    if (isMobile(context)) return 2;
+    if (isTablet(context)) return 3;
+    return 4;
+  }
+
+  double getResponsiveFontSize(BuildContext context, double baseSize) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    if (screenWidth < 600) return baseSize * 0.8;
+    if (screenWidth < 900) return baseSize * 0.9;
+    return baseSize;
+  }
+
+  double getResponsivePadding(BuildContext context, double basePadding) {
+    if (isMobile(context)) return basePadding * 0.7;
+    if (isTablet(context)) return basePadding * 0.85;
+    return basePadding;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
       body: Column(
         children: [
-          // CABECERA
+          // CABECERA RESPONSIVE
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.blue, Colors.purple],
-              ),
+            padding: EdgeInsets.symmetric(
+              vertical: getResponsivePadding(context, 20),
+              horizontal: getResponsivePadding(context, 16),
             ),
-            child: const Column(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(colors: [Colors.blue, Colors.purple]),
+            ),
+            child: Column(
               children: [
                 Text(
                   'PRIME DOX',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 28,
+                    fontSize: getResponsiveFontSize(context, 28),
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 6),
+                SizedBox(height: getResponsivePadding(context, 6)),
                 Text(
                   'Servicios Profesionales de Información',
                   style: TextStyle(
                     color: Colors.white70,
-                    fontSize: 16,
+                    fontSize: getResponsiveFontSize(context, 16),
                   ),
+                  textAlign: TextAlign.center,
                 ),
               ],
             ),
           ),
 
-          // CONTENIDO
+          // CONTENIDO RESPONSIVE
           Expanded(
-            child: Row(
+            child: isMobile(context)
+                ? _buildMobileLayout(context)
+                : _buildDesktopLayout(context),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Layout para móviles (columna vertical)
+  Widget _buildMobileLayout(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          // SERVICIOS
+          Padding(
+            padding: EdgeInsets.all(getResponsivePadding(context, 16)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // SERVICIOS
-                Expanded(
-                  flex: 3,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'SERVICIOS DISPONIBLES',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Expanded(
-                          child: GridView.count(
-                            crossAxisCount: 4,
-                            crossAxisSpacing: 10,
-                            mainAxisSpacing: 10,
-                            childAspectRatio: 0.9,
-                            children: [
-                              servicioItem('RENIEC', Icons.person, Colors.blue),
-                              servicioItem('TELEFONIA', Icons.phone, Colors.green),
-                              servicioItem('DELITOS', Icons.security, Colors.red),
-                              servicioItem('SUNARP', Icons.home, Colors.orange),
-                              servicioItem('GENERADOR', Icons.build, Colors.purple),
-                              servicioItem('FAMILIARES', Icons.group, Colors.pink),
-                              servicioItem('SPAM', Icons.mail, Colors.indigo),
-                              servicioItem('SEEKER', Icons.search, Colors.teal),
-                              servicioItem('ACTAS', Icons.folder, Colors.brown),
-                              servicioItem('EXTRA', Icons.add, Colors.cyan),
-                              servicioItem('INFO BURRO', Icons.star, Colors.amber),
-                              servicioItem('RQ', Icons.diamond, Colors.deepPurple),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                Text(
+                  'SERVICIOS DISPONIBLES',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: getResponsiveFontSize(context, 18),
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
+                SizedBox(height: getResponsivePadding(context, 10)),
+                _buildServicesGrid(context),
+              ],
+            ),
+          ),
 
-                // CONTACTOS
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Container(
-                    width: 270,
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 16),
-                        const Padding(
-                          padding: EdgeInsets.only(left: 20),
-                          child: Text(
-                            'CONTACTOS',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-
-                        // SCROLL
-                        Expanded(
-                          child: Center(
-                            child: SingleChildScrollView(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  contactoItem(
-                                    nombre: 'PEDRO DOXING',
-                                    rol: 'DUEÑO',
-                                    assetImage: 'assets/pedro.jpg',
-                                    numeroWhatsApp: '51950321131',
-                                  ),
-                                  const SizedBox(height: 20),
-                                  contactoItem(
-                                    nombre: 'JOSE',
-                                    rol: 'JOSE',
-                                    assetImage: 'assets/jose.jpg',
-                                    numeroWhatsApp: '51913447999',
-                                  ),
-                                  const SizedBox(height: 20),
-                                  contactoItem(
-                                    nombre: 'ANÓNIMO DOX',
-                                    rol: 'HACKER',
-                                    assetImage: 'assets/anonimo.jpg',
-                                    numeroWhatsApp: '51973108528',
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+          // CONTACTOS
+          Padding(
+            padding: EdgeInsets.all(getResponsivePadding(context, 16)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'CONTACTOS',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: getResponsiveFontSize(context, 18),
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
+                SizedBox(height: getResponsivePadding(context, 16)),
+                _buildContactsList(context),
               ],
             ),
           ),
@@ -183,8 +158,136 @@ class PrimeDoxHome extends StatelessWidget {
     );
   }
 
-  // WIDGET SERVICIO
-  Widget servicioItem(String titulo, IconData icono, Color color) {
+  // Layout para tablet/desktop (fila horizontal)
+  Widget _buildDesktopLayout(BuildContext context) {
+    return Row(
+      children: [
+        // SERVICIOS
+        Expanded(
+          flex: isDesktop(context) ? 3 : 2,
+          child: Padding(
+            padding: EdgeInsets.all(getResponsivePadding(context, 16)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'SERVICIOS DISPONIBLES',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: getResponsiveFontSize(context, 18),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: getResponsivePadding(context, 10)),
+                Expanded(child: _buildServicesGrid(context)),
+              ],
+            ),
+          ),
+        ),
+
+        // CONTACTOS
+        Container(
+          width: isDesktop(context) ? 300 : 250,
+          padding: EdgeInsets.symmetric(
+            horizontal: getResponsivePadding(context, 12),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: getResponsivePadding(context, 16)),
+              Padding(
+                padding: EdgeInsets.only(
+                  left: getResponsivePadding(context, 20),
+                ),
+                child: Text(
+                  'CONTACTOS',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: getResponsiveFontSize(context, 18),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              SizedBox(height: getResponsivePadding(context, 16)),
+              Expanded(
+                child: Center(
+                  child: SingleChildScrollView(
+                    child: _buildContactsList(context),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Grid de servicios responsive
+  Widget _buildServicesGrid(BuildContext context) {
+    return GridView.count(
+      shrinkWrap: isMobile(context),
+      physics: isMobile(context) ? const NeverScrollableScrollPhysics() : null,
+      crossAxisCount: getGridCrossAxisCount(context),
+      crossAxisSpacing: getResponsivePadding(context, 10),
+      mainAxisSpacing: getResponsivePadding(context, 10),
+      childAspectRatio: isMobile(context) ? 1.1 : 0.9,
+      children: [
+        servicioItem('RENIEC', Icons.person, Colors.blue, context),
+        servicioItem('TELEFONIA', Icons.phone, Colors.green, context),
+        servicioItem('DELITOS', Icons.security, Colors.red, context),
+        servicioItem('SUNARP', Icons.home, Colors.orange, context),
+        servicioItem('GENERADOR', Icons.build, Colors.purple, context),
+        servicioItem('FAMILIARES', Icons.group, Colors.pink, context),
+        servicioItem('SPAM', Icons.mail, Colors.indigo, context),
+        servicioItem('SEEKER', Icons.search, Colors.teal, context),
+        servicioItem('ACTAS', Icons.folder, Colors.brown, context),
+        servicioItem('EXTRA', Icons.add, Colors.cyan, context),
+        servicioItem('INFO BURRO', Icons.star, Colors.amber, context),
+        servicioItem('RQ', Icons.diamond, Colors.deepPurple, context),
+      ],
+    );
+  }
+
+  // Lista de contactos responsive
+  Widget _buildContactsList(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        contactoItem(
+          nombre: 'PEDRO DOXING',
+          rol: 'DUEÑO',
+          assetImage: 'assets/pedro.jpg',
+          numeroWhatsApp: '51950321131',
+          context: context,
+        ),
+        SizedBox(height: getResponsivePadding(context, 20)),
+        contactoItem(
+          nombre: 'JOSE',
+          rol: 'JOSE',
+          assetImage: 'assets/jose.jpg',
+          numeroWhatsApp: '51913447999',
+          context: context,
+        ),
+        SizedBox(height: getResponsivePadding(context, 20)),
+        contactoItem(
+          nombre: 'ANÓNIMO DOX',
+          rol: 'HACKER',
+          assetImage: 'assets/anonimo.jpg',
+          numeroWhatsApp: '51973108528',
+          context: context,
+        ),
+      ],
+    );
+  }
+
+  // WIDGET SERVICIO RESPONSIVE
+  Widget servicioItem(
+    String titulo,
+    IconData icono,
+    Color color,
+    BuildContext context,
+  ) {
     return Container(
       decoration: BoxDecoration(
         color: color,
@@ -194,13 +297,22 @@ class PrimeDoxHome extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icono, color: Colors.white, size: 30),
-            const SizedBox(height: 8),
-            Text(
-              titulo,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
+            Icon(icono, color: Colors.white, size: isMobile(context) ? 24 : 30),
+            SizedBox(height: getResponsivePadding(context, 8)),
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: getResponsivePadding(context, 4),
+              ),
+              child: Text(
+                titulo,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: getResponsiveFontSize(context, 12),
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
@@ -209,15 +321,19 @@ class PrimeDoxHome extends StatelessWidget {
     );
   }
 
-  // WIDGET CONTACTO
+  // WIDGET CONTACTO RESPONSIVE
   Widget contactoItem({
     required String nombre,
     required String rol,
     required String assetImage,
     required String numeroWhatsApp,
+    required BuildContext context,
   }) {
+    double avatarRadius = isMobile(context) ? 35 : 40;
+
     return Container(
-      padding: const EdgeInsets.all(12),
+      width: isMobile(context) ? double.infinity : null,
+      padding: EdgeInsets.all(getResponsivePadding(context, 12)),
       decoration: BoxDecoration(
         color: Colors.grey[900],
         borderRadius: BorderRadius.circular(16),
@@ -225,33 +341,59 @@ class PrimeDoxHome extends StatelessWidget {
       child: Column(
         children: [
           CircleAvatar(
-            radius: 40,
+            radius: avatarRadius,
             backgroundImage: AssetImage(assetImage),
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: getResponsivePadding(context, 10)),
           Text(
             nombre,
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.greenAccent,
               fontWeight: FontWeight.bold,
-              fontSize: 14,
+              fontSize: getResponsiveFontSize(context, 14),
             ),
             textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
-          const SizedBox(height: 10),
-          ElevatedButton(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-            child: Text(rol),
+          SizedBox(height: getResponsivePadding(context, 10)),
+          SizedBox(
+            width: isMobile(context) ? double.infinity : null,
+            child: ElevatedButton(
+              onPressed: () {},
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                padding: EdgeInsets.symmetric(
+                  horizontal: getResponsivePadding(context, 16),
+                  vertical: getResponsivePadding(context, 8),
+                ),
+              ),
+              child: Text(
+                rol,
+                style: TextStyle(fontSize: getResponsiveFontSize(context, 12)),
+              ),
+            ),
           ),
-          const SizedBox(height: 6),
-          ElevatedButton.icon(
-            onPressed: () {
-              launchWhatsApp(numeroWhatsApp);
-            },
-            icon: const Icon(Icons.chat),
-            label: const Text('Contactar'),
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+          SizedBox(height: getResponsivePadding(context, 6)),
+          SizedBox(
+            width: isMobile(context) ? double.infinity : null,
+            child: ElevatedButton.icon(
+              onPressed: () {
+                launchWhatsApp(numeroWhatsApp);
+              },
+              icon: Icon(Icons.chat, size: getResponsiveFontSize(context, 16)),
+              label: Text(
+                'Contactar',
+                style: TextStyle(fontSize: getResponsiveFontSize(context, 12)),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                padding: EdgeInsets.symmetric(
+                  horizontal: getResponsivePadding(context, 16),
+                  vertical: getResponsivePadding(context, 8),
+                ),
+              ),
+            ),
           ),
         ],
       ),
